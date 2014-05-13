@@ -5,6 +5,7 @@
  *      Author: MaikLempik
  */
 #include <stdio.h>
+#include "aufgabe2.h"
 
 int main(void) {
 	printf("init");

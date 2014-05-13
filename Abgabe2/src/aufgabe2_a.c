@@ -13,7 +13,7 @@ void* feldThread(void* arg) {
 
 	int i;
 
-	for (i = 0; i < NUM_THREADS; i++) {
+	for (i = 0; i < NUM_THREADS-1; i++) {
 		if (pthread_equal(threadArray[i], pthread_self())) {
 
 			gibStartPosition(i);
@@ -43,7 +43,7 @@ int main(void) {
 	int status;
 
 	int i;
-	for (i = 0; i < NUM_THREADS; i++) {
+	for (i = 0; i < NUM_THREADS-1; i++) {
 		status = pthread_create(&threadArray[i], NULL, &feldThread, NULL);
 	}
 
@@ -51,7 +51,8 @@ int main(void) {
 	status = pthread_create(&anzeigeThread, NULL, &anzeigeThread, NULL);
 
 	do {
-		EingabeZeichen = getchar();
+		scanf("%c", &EingabeZeichen);
+		fflush(stdin);
 	} while (EingabeZeichen != 'b' || EingabeZeichen != 'B');
 
 	for (i = 0; i < NUM_THREADS; i++) {

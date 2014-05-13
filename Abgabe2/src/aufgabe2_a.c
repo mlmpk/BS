@@ -1,13 +1,9 @@
 #include "aufgabe2.h"
 #include <stdio.h>
-<<<<<<< HEAD
 #include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
 #include <pthread.h>
-=======
-#include "aufgabe2.h"
->>>>>>> FETCH_HEAD
 
 #define NUM_THREADS	10
 

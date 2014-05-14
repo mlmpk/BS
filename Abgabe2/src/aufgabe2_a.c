@@ -1,3 +1,4 @@
+
 #include "aufgabe2.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,11 +14,15 @@ void* feldThread(void* arg) {
 
 	int i;
 
-	for (i = 0; i < NUM_THREADS-1; i++) {
+	for (i = 0; i < NUM_THREADS; i++) {
 		if (pthread_equal(threadArray[i], pthread_self())) {
 
-			gibStartPosition(i);
+			struct Position ps = gibStartPosition(i);
 			do {
+
+				char tmp = Feld[ps.Y][ps.X];
+				struct Position newPS = gibNeuePosition(ps);
+				Feld[newPS.Y][newPS.X] = tmp;
 
 				usleep(200000);
 
@@ -43,24 +48,24 @@ int main(void) {
 	int status;
 
 	int i;
-	for (i = 0; i < NUM_THREADS-1; i++) {
+	for (i = 0; i < NUM_THREADS; i++) {
 		status = pthread_create(&threadArray[i], NULL, &feldThread, NULL);
 	}
 
 	pthread_t anzeigeThread = NULL;
 	status = pthread_create(&anzeigeThread, NULL, &anzeigeThread, NULL);
+	int temp;
+	//do {
+		scanf("%d", &temp);
 
-	do {
-		scanf("%c", &EingabeZeichen);
-		fflush(stdin);
-	} while (EingabeZeichen != 'b' || EingabeZeichen != 'B');
-
+	//} while (EingabeZeichen != 'b' || EingabeZeichen != 'B');
+/*
 	for (i = 0; i < NUM_THREADS; i++) {
 		status = pthread_join(threadArray[i], NULL);
 	}
 
 	pthread_exit(NULL);
-
+*/
 	return 0;
 }
 

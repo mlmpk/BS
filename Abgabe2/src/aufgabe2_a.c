@@ -20,13 +20,13 @@ void* feldThread(void* arg) {
 			struct Position ps = gibStartPosition(i);
 			do {
 
-				char tmp = Feld[ps.Y][ps.X];
-				struct Position newPS = gibNeuePosition(ps);
-				Feld[newPS.Y][newPS.X] = tmp;
+				char tmp = Feld[ps.Y][ps.X];	 // zwischenspeichern des Zeichens aus dem Feld an der aktuellen Position
+				struct Position newPS = gibNeuePosition(ps); // neue Position ermitteln
+				Feld[newPS.Y][newPS.X] = tmp; // an die neue Position den alten Wert schreiben
 
-				usleep(200000);
+				usleep(200000); // 200ms warten
 
-			} while (EingabeZeichen != 'b' || EingabeZeichen != 'B');
+			} while( !((EingabeZeichen == 'b') || (EingabeZeichen == 'B')) );
 		}
 	}
 
@@ -34,38 +34,44 @@ void* feldThread(void* arg) {
 }
 
 void* anzeigeThread(void *arg) {
+
 	do {
 		anzeigen();
 		usleep(30000);
-	} while (EingabeZeichen != 'b' || EingabeZeichen != 'B');
+	} while( !((EingabeZeichen == 'b') || (EingabeZeichen == 'B')) );
 
 	pthread_exit(NULL);
 }
 
 int main(void) {
+
+	// initialisiere das Feld und die Startpositionen
 	init();
 
-	int status;
-
 	int i;
+	// Erzeuge 10 Threads
 	for (i = 0; i < NUM_THREADS; i++) {
-		status = pthread_create(&threadArray[i], NULL, &feldThread, NULL);
+		pthread_create(&threadArray[i], NULL, &feldThread, NULL);
 	}
 
-	pthread_t anzeigeThread = NULL;
-	status = pthread_create(&anzeigeThread, NULL, &anzeigeThread, NULL);
-	int temp;
-	//do {
-		scanf("%d", &temp);
+	// Erzeuge einen anzeigeThread
+	pthread_t aThread;
+	pthread_create(&aThread, NULL, anzeigeThread, NULL);
 
-	//} while (EingabeZeichen != 'b' || EingabeZeichen != 'B');
-/*
+	// Abfrage der Eingabe
+	do
+	{
+		scanf(" %c", &EingabeZeichen);
+
+	} while( !((EingabeZeichen == 'b') || (EingabeZeichen == 'B')) );
+
+	// fange alle Threads wieder ein
 	for (i = 0; i < NUM_THREADS; i++) {
-		status = pthread_join(threadArray[i], NULL);
+		pthread_join(threadArray[i], NULL);
 	}
 
 	pthread_exit(NULL);
-*/
+
 	return 0;
 }
 

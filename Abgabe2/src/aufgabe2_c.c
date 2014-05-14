@@ -9,7 +9,7 @@
 #define NUM_THREADS	10
 
 pthread_t threadArray[NUM_THREADS];
-pthread_mutex_t lock;
+static pthread_mutex_t lock;
 
 void* feldThread(void* arg) {
 
@@ -18,18 +18,19 @@ void* feldThread(void* arg) {
 	for (i = 0; i < NUM_THREADS; i++) {
 
 		if (pthread_equal(threadArray[i], pthread_self())) {
-			pthread_mutex_lock(&lock);
+			pthread_mutex_lock(&lock); // <<<< Hier wird ein mutex lock gesetzt
 			struct Position ps = gibStartPosition(i);
 
 			do {
 				char tmp = Feld[ps.Y][ps.X];	 // zwischenspeichern des Zeichens aus dem Feld an der aktuellen Position
+
 				struct Position newPS = gibNeuePosition(ps); // neue Position ermitteln
 				Feld[newPS.Y][newPS.X] = tmp; // an die neue Position den alten Wert schreiben
 
 				usleep(200000); // 200ms warten
 
 			} while( !((EingabeZeichen == 'b') || (EingabeZeichen == 'B')) );
-			pthread_mutex_unlock(&lock);
+			pthread_mutex_unlock(&lock); // <<<< Hier wird ein mutex lock entsperrt
 		}
 
 	}
@@ -38,18 +39,14 @@ void* feldThread(void* arg) {
 }
 
 void* anzeigeThread(void *arg) {
-
-	pthread_mutex_lock(&lock);
+	pthread_mutex_lock(&lock);			// <<<< Hier wird ein mutex lock gesetzt
 
 	do {
-
 		anzeigen();
 		usleep(30000);
-
 	} while( !((EingabeZeichen == 'b') || (EingabeZeichen == 'B')) );
 
-	pthread_mutex_unlock(&lock);
-
+	pthread_mutex_unlock(&lock); 		// <<<< Hier wird ein mutex lock entsperrt
 	pthread_exit(NULL);
 }
 
@@ -60,9 +57,11 @@ int main(void) {
 
 	int i;
 	// Erzeuge 10 Threads
+
 	for (i = 0; i < NUM_THREADS; i++) {
 		pthread_create(&threadArray[i], NULL, &feldThread, NULL);
 	}
+
 
 	// Erzeuge einen anzeigeThread
 	pthread_t aThread;
